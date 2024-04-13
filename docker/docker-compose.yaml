@@ -1,0 +1,84 @@
+version: '3.9'
+
+networks:
+  sqs_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/24
+          gateway: 172.19.0.1
+
+configs:
+  db_init:
+    file: ./postgre/db_init.sql
+
+services:
+  postgres_kafka:
+    container_name: postgres_kafka
+    image: docker.io/timescale/timescaledb:latest-pg16
+    networks:
+      - sqs_network
+    environment:
+      POSTGRES_DB: admin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      start_period: 5s
+    volumes:
+      - postgres_kafka:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    command: [ "postgres", "-c", "log_statement=all" ]
+    configs:
+      - source: db_init
+        target: /docker-entrypoint-initdb.d/db_init.sql
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    networks:
+      - sqs_network
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka-server:
+    image: confluentinc/cp-kafka:latest
+    networks:
+      - sqs_network
+    hostname: kafka-server
+    container_name: kafka-server
+    depends_on:
+      - zookeeper
+    ports:
+      - "9999:9999"
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-server:9092,PLAINTEXT_HOST://kafka-server:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-sqs:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    container_name: kafka-sqs
+    pull_policy: always
+    networks:
+      - sqs_network
+    depends_on:
+      - postgres_kafka
+      - kafka-server
+    ports:
+      - "8081:8081"
+volumes:
+  postgres_kafka:

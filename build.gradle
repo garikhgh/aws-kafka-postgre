@@ -21,26 +21,45 @@ repositories {
 	mavenCentral()
 }
 
-dependencyManagement {
-	imports {
-		mavenBom 'io.awspring.cloud:spring-cloud-aws:3.0.4'
-	}
-}
+//dependencyManagement {
+//	imports {
+//		mavenBom 'io.awspring.cloud:spring-cloud-aws:3.0.4'
+//	}
+//}
 
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	implementation 'io.awspring.cloud:spring-cloud-aws'
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.2.0-M1'
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+	implementation 'org.springframework.kafka:spring-kafka'
 
+//	implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.2.0-M1'
+//	implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.0-M1'
+
+	runtimeOnly 'org.postgresql:postgresql'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+jar {
+	archivesBaseName = 'sqs'
+}
+
+//jib {
+//	from {
+//		image = 'openjdk:17.0.1-jdk-slim'
+//	}
+//	to {
+//		image = 'garikhgh/sqs'
+//		auth {
+//			username = "${USERNAME}"
+//			password = "${PASSWORD}"
+//		}
+//	}
+//}
 
 tasks.named('test') {
 	useJUnitPlatform()

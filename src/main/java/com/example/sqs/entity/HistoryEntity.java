@@ -2,10 +2,7 @@ package com.example.sqs.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -13,9 +10,10 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "candidates")
+@Table(name = "history")
+@Builder
 public class HistoryEntity {
 
     @Id
