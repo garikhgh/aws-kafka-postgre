@@ -10,6 +10,6 @@ def delivery_report(err, msg):
         print(f'Message delivered to {msg.topic()} [{msg.partition()}]')
 
 
-p = Producer({'bootstrap.servers':'172.19.0.4:9092'})
+p = Producer({'bootstrap.servers':'localhost:29092'})
 p.produce('vote', message_value.encode('utf-8'), callback=delivery_report)
 p.flush()
