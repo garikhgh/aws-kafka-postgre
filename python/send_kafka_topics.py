@@ -1,6 +1,8 @@
 from locust import HttpUser, task, between
 from confluent_kafka import Producer
+from confluent_kafka.serialization import StringSerializer
 import json
+from time import sleep
 
 message_value = "{\"candidateName\": \"Gexapet\", \"votes\": 1}"
 
@@ -11,12 +13,13 @@ class KafkaUser():
         super().__init__(*args, **kwargs)
         self.bootstrap_servers = 'localhost:9092'
         self.topic = 'vote'
+        self.serializer = StringSerializer('utf_8')
 
 
     def on_start(self):
         self.producer = Producer({
             'bootstrap.servers': self.bootstrap_servers,
-            'acks': 'all'
+            'acks': 'all',
         })
 
     def on_stop(self):
@@ -33,8 +36,10 @@ class KafkaUser():
         self.producer.close()
 
 kafka = KafkaUser()
-kafka.on_start()
-kafka.send_message()
+for i in range(1000):
+    kafka.on_start()
+    kafka.send_message()
+    sleep(0.01)
 
 
 
