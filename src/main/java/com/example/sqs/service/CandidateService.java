@@ -5,6 +5,7 @@ import com.example.sqs.entity.CandidateEntity;
 import com.example.sqs.entity.HistoryEntity;
 import com.example.sqs.repository.CandidateRepository;
 import com.example.sqs.repository.HistoryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,16 @@ public class CandidateService {
     private final CandidateRepository candidateRepository;
     private final HistoryRepository historyRepository;
 
+    public void deleteAll(String all) {
+        if (all.equals("all")) {
+            candidateRepository.deleteAll();
+            historyRepository.deleteAll();
+            log.info("All history is cleared");
+        }
+
+    }
+
+    @Transactional
     public void addVotesToCandidate(VoteDto voteDto) {
         Optional<CandidateEntity> bySpeechName = candidateRepository.findBySpeechName(voteDto.getCandidateName());
         bySpeechName.ifPresentOrElse(candidate -> {

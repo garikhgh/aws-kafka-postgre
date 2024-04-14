@@ -30,6 +30,7 @@ class KafkaUser():
         message = {"candidateName": "Gexapet", "votes": 1}
         self.producer.produce(self.topic, key='consuming', value=json.dumps(message))
         self.on_stop()
+        
 
     def teardown(self):
         self.producer.flush()
@@ -39,6 +40,7 @@ kafka = KafkaUser()
 for i in range(1000):
     kafka.on_start()
     kafka.send_message()
+    print("Sending data to Kafka broker counter=" , i)
     sleep(0.01)
 
 
