@@ -67,18 +67,18 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  kafka-sqs:
-    build:
-      context: ../
-      dockerfile: ./docker/Dockerfile
-    container_name: kafka-sqs
-    pull_policy: always
-    networks:
-      - sqs_network
-    depends_on:
-      - postgres_kafka
-      - kafka-server
-    ports:
-      - "8081:8081"
+#  kafka-sqs:
+#    build:
+#      context: ../
+#      dockerfile: ./docker/Dockerfile
+#    container_name: kafka-sqs
+#    pull_policy: always
+#    networks:
+#      - sqs_network
+#    depends_on:
+#      - postgres_kafka
+#      - kafka-server
+#    ports:
+#      - "8081:8081"
 volumes:
   postgres_kafka:

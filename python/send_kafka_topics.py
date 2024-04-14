@@ -7,7 +7,6 @@ from time import sleep
 message_value = "{\"candidateName\": \"Gexapet\", \"votes\": 1}"
 
 class KafkaUser():
-    wait_time = between(1, 2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,6 +41,6 @@ for i in range(1000):
     kafka.send_message()
     print("Sending data to Kafka broker counter=" , i)
     sleep(0.01)
-
+#locust -f send_kafka_topics.p
 
 

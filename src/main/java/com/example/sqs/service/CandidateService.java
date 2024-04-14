@@ -5,10 +5,12 @@ import com.example.sqs.entity.CandidateEntity;
 import com.example.sqs.entity.HistoryEntity;
 import com.example.sqs.repository.CandidateRepository;
 import com.example.sqs.repository.HistoryRepository;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -30,6 +32,7 @@ public class CandidateService {
     }
 
     @Transactional
+    @Retryable(maxAttempts = 15)
     public void addVotesToCandidate(VoteDto voteDto) {
         Optional<CandidateEntity> bySpeechName = candidateRepository.findBySpeechName(voteDto.getCandidateName());
         bySpeechName.ifPresentOrElse(candidate -> {

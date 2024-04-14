@@ -43,6 +43,7 @@ public class CandidateController {
 
         try {
             candidateService.addVotesToCandidate(vote);
+//            kafkaProducer.send(vote);
             return new ResponseEntity<>("Votes successfully added to Candidate", HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             log.warn("Exception in controller:", ex);
