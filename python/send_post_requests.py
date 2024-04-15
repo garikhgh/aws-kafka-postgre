@@ -1,6 +1,7 @@
 import requests
 from time import sleep
 from concurrent.futures import ThreadPoolExecutor
+import threading
 
 url_create = "http://localhost:8081/add/candidate"
 url_vote = "http://localhost:8081/add/vote"
@@ -23,7 +24,7 @@ def delete_dandidateAndHistory():
 def run_request(range_value):
     for i in range_value:
         status_code = send_request()
-        print("Status code for vote is ", status_code, i)
+        print("Status code for vote is ", status_code, i, "thread ", threading.get_native_id())
         sleep(0.01)
     return status_code    
 
@@ -37,9 +38,14 @@ def creat_candidate():
     
 def run_request_threaded():
      with ThreadPoolExecutor(max_workers = 5) as executor:
-         for _ in range(5):
-             future = executor.submit(run_request, range(200))
-             print(future.result())
+         executor.submit(run_request, range(5000))
+         executor.submit(run_request, range(5000))
+         executor.submit(run_request, range(5000))
+         executor.submit(run_request, range(5000))
+         executor.submit(run_request, range(5000))
+        #  for _ in range(5):
+        #      future = executor.submit(run_request, range(200))
+        #      print(future.result())
      
 
 if __name__ == "__main__":
